@@ -1,10 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
-import { getLinkedInInfo } from "../services/getAPIs";
+import "bootstrap/dist/css/bootstrap.css";
 
 interface IProfile {
-  name: string;
-  description: string;
+  title: string;
+  sobre: string;
 }
 
 const Profile = () => {
@@ -16,15 +16,6 @@ const Profile = () => {
   const fetchProfileData = async () => {
     setLoading(true);
     try {
-      // await getLinkedInInfo(linkedinURL)
-      //   .then((res) => {
-      //     const data = res;
-      //     console.log("data", data);
-      //     setLoading(false);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
       await axios
         .get("/api/puppeteer", {
           params: {
@@ -32,15 +23,20 @@ const Profile = () => {
           },
         })
         .then((data) => {
+          setLoading(false);
           console.log("data", data);
+          setProfileData(data.data);
         })
         .catch((e) => {
+          setLoading(false);
+          setError(error);
           console.log(e);
           return;
         });
     } catch (error) {
-      setError("Erro ao buscar dados do perfil");
       setLoading(false);
+      setError(error);
+      console.log(error);
     }
   };
 
@@ -54,24 +50,27 @@ const Profile = () => {
   };
 
   return (
-    <div>
-      <h1>Obter Dados do Perfil do LinkedIn</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="m-4">
+      <h1 className="h2">Obter Dados do Perfil do LinkedIn</h1>
+      <form onSubmit={handleSubmit} className="d-flex align-items-center gap-2">
         <input
+          className="form-control my-4"
           type="text"
           placeholder="Insira a URL do Perfil do LinkedIn"
           value={linkedinURL}
           onChange={handleInputChange}
         />
-        <button type="submit">Buscar</button>
+        <button className="btn btn-secondary w-full" type="submit">
+          Buscar
+        </button>
       </form>
       {loading && <p>Carregando...</p>}
       {error && <p>{error}</p>}
       {profileData && (
         <div>
-          <h2>Dados do Perfil:</h2>
-          <p>Nome: {profileData.name}</p>
-          <p>Descrição: {profileData.description}</p>
+          <h2 className="h3">Dados do Perfil:</h2>
+          <p>Nome: {profileData.title}</p>
+          <p>Descrição: {profileData.sobre}</p>
         </div>
       )}
     </div>
