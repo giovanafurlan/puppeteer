@@ -13,8 +13,8 @@ export default async function handler(
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
-    await page.goto(urlProfile, { waitUntil: "networkidle2" });
-    await page.screenshot({ path: screenshot });
+    await page.goto(urlProfile, { waitUntil: "networkidle2", timeout: 0 });
+    // await page.screenshot({ path: screenshot });
     // pega título
     let title = await page.title();
     // botão login
@@ -24,10 +24,7 @@ export default async function handler(
     // pega conteúdo sobre
     await page.waitForSelector(".core-section-container__content");
     let elementSobre = await page.$(".core-section-container__content");
-    let sobre = await page.evaluate(
-      (el) => el.textContent,
-      elementSobre
-    );
+    let sobre = await page.evaluate((el) => el.textContent, elementSobre);
 
     // pega conteúdo função
     const funcao = await page.evaluate(() => {
@@ -49,23 +46,31 @@ export default async function handler(
     });
 
     const experiencias = await page.evaluate(() => {
-      const experienceItems = document.querySelectorAll('section[data-section="experience"] .experience-item');
+      const experienceItems = document.querySelectorAll(
+        'section[data-section="experience"] .experience-item'
+      );
       const experiencesArray = [];
-  
-      experienceItems.forEach(item => {
-        const empresa = item.querySelector('.experience-item__subtitle').textContent.trim();
-        const duracao = item.querySelector('.date-range').textContent.trim();
-        const localizacao = item.querySelectorAll('.experience-item__meta-item')[1].textContent.trim();
-        const descricao = item.querySelector('.show-more-less-text__text--less').textContent.trim();
-  
+
+      experienceItems.forEach((item) => {
+        const empresa = item
+          .querySelector(".experience-item__subtitle")
+          .textContent.trim();
+        const duracao = item.querySelector(".date-range").textContent.trim();
+        const localizacao = item
+          .querySelectorAll(".experience-item__meta-item")[1]
+          .textContent.trim();
+        const descricao = item
+          .querySelector(".show-more-less-text__text--less")
+          .textContent.trim();
+
         experiencesArray.push({
           empresa,
           duracao,
           localizacao,
-          descricao
+          descricao,
         });
       });
-  
+
       return experiencesArray;
     });
 
