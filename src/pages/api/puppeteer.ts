@@ -13,7 +13,7 @@ export default async function handler(
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
-    await page.goto(urlProfile, { waitUntil: "networkidle2", timeout: 0 });
+    await page.goto(urlProfile, { waitUntil: "networkidle2", timeout: 60000 });
     // await page.screenshot({ path: screenshot });
     // pega título
     let title = await page.title();
